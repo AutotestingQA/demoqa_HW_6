@@ -5,6 +5,8 @@ import pages.components.CalendarComponent;
 import pages.components.CheckResultComponent;
 import pages.components.StateCityComponent;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
@@ -103,6 +105,23 @@ public class RegistrationPage {
         submitButton.click();
         return this;
     }
+
+    public static int getRandomInt(int min, int max) {
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
+    }
+
+    public static String getRandomItemFromArray(String[] array) {
+        int index = getRandomInt(0, array.length - 1);
+
+        return array[index];
+    }
+
+    public static String getRandomGender() {
+        String[] genders = {"Male", "Female", "Other"};
+
+        return getRandomItemFromArray(genders);
+    }
+
 
     public RegistrationPage checkResultFields(String key, String value) {
         CheckResultComponent.checkResultFields(key, value);
