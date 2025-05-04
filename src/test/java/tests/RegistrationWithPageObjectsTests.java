@@ -3,40 +3,53 @@ package tests;
 import org.junit.jupiter.api.Test;
 import pages.RegistrationPage;
 
-import static com.codeborne.selenide.Condition.appear;
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selectors.byText;
-import static com.codeborne.selenide.Selenide.*;
-
 public class RegistrationWithPageObjectsTests extends TestBase {
+
 
     RegistrationPage registrationPage = new RegistrationPage();
 
+    //Позитивный тест
     @Test
     void successfulRegistrationTest() {
         registrationPage.openPage()
-                .setFirstName("Alex")
-                .setLastName("Egorov")
-                .setEmail("alex@egorov.com")
+                .setFirstName("Stan")
+                .setLastName("Ignatov")
+                .setEmail("stan@ignatov.com")
                 .setGender("Other")
                 .setUserNumber("1234567890")
-                .setDateOfBirth("30", "July", "2008");
+                .setDateOfBirth("30", "July", "2008")
+                .setSubjectsInput("Math")
+                .setHobbiesInput("Sports")
+                .setUploadPicture("img/1.png")
+                .setCurrentAddress("Some address 1")
+                .setStateCity("NCR", "Delhi")
+                .clickSubmitButton()
+                .checkModal()
+                .checkResultFields("Student Name", "Stan Ignatov")
+                .checkResultFields("Student Email", "stan@ignatov.com")
+                .checkResultFields("Mobile", "1234567890");
+    }
 
-        $("#subjectsInput").setValue("Math").pressEnter();
-        $("#hobbiesWrapper").$(byText("Sports")).click();
-        $("#uploadPicture").uploadFromClasspath("img/1.png");
-        $("#currentAddress").setValue("Some address 1");
-        $("#state").click();
-        $("#stateCity-wrapper").$(byText("NCR")).click();
-        $("#city").click();
-        $("#stateCity-wrapper").$(byText("Delhi")).click();
-        $("#submit").click();
+    //Тест заполнение обязательных полей
+    @Test
+    void minimalDataTest() {
+        registrationPage.openPage()
+        .setFirstName("Stan")
+        .setLastName("Ignatov")
+        .setGender("Male")
+        .setUserNumber("1234567890")
+        .setDateOfBirth("01", "July", "1990")
+        .clickSubmitButton()
+        .checkModal()
+        .checkResultFields("Student Name", "Stan Ignatov")
+        .checkResultFields("Mobile", "1234567890");
+    }
 
-        $(".modal-dialog").should(appear);
-        $("#example-modal-sizes-title-lg").shouldHave(text("Thanks for submitting the form"));
-        $(".table-responsive").shouldHave(text("Alex"), text("Egorov"),
-                text("alex@egorov.com"), text("1234567890"));
-        registrationPage.checkResult("Student Name", "Alex Egorov")
-                .checkResult("Student Email", "alex@egorov.com");
+    //Негативный тест
+    @Test
+    void negativeTest() {
+        registrationPage.openPage()
+                .clickSubmitButton()
+                .checkModalNegative();
     }
 }
